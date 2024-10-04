@@ -111,7 +111,7 @@ bool Accounts::Login()
 			}
 			else if(acc.username == user && acc.password == pass && acc.role == 0)   //USER
 			{
-				cout << "Login Success!!!!" << endl;
+				system("cls");
 				string option;
 				while(1)
 				{
@@ -123,81 +123,24 @@ bool Accounts::Login()
 					switch(check)
 					{
 						case 1:{
-							string option,pickLotID,lp,md,br,cl;bool find=false;
-							cout << "-------- DAT VE ------------"<<endl;
-							cout << "Chon loai ve:"<<endl;
-							cout << "1.Ngay"<<endl;
-							cout << "2.Tuan"<<endl;
-							cout << "3.Thang"<<endl;
-							cout << "Chon loai ve: ";
+							here:
+							cout << "-------- ORDER TICKET -------"<<endl;
+							cout << "*         1.DAILY           *"<<endl;
+							cout << "*         2.WEEKLY          *"<<endl;
+							cout << "*         3.MONTHLY         *"<<endl;
+							cout << "-----------------------------"<<endl;
+							cout << "SELECT : ";
 							getline(cin,option);
 							int check = checkinput(option);
-							switch(check)
-							{
-								case 1:{
-									cout << "---------------------"<<endl;
-									pl.Show(1);							
-									cout << "Nhap LotID can dat : ";getline(cin,pickLotID);
-									for(auto &park : listpark){
-										if(park.GetLotID() == pickLotID && park.GetStatus()==0 && park.GetArea()=='C'){
-											find = true;
-											park.SetStatus(1);
-											cout << "Dang ki LotID " << pickLotID << " thanh cong!!"<<endl; cout << "Press any key to continue";
-											_getch();system("cls");
-											ofstream filepl("ParkingLots.txt",ios::out);
-											ofstream fileveh("Vehicles.txt",ios::app);
-											ofstream filerg("Registrations.txt",ios::app);
-											for(auto &park:listpark){
-												filepl << park.GetLotID() << ";" << park.GetArea() << ";" << park.GetStatus() << endl;
-											}
-											filepl.close();
-											cout << "---- Vehice register ------"<<endl;
-											cout << "Enter LicensePlate :" ;getline(cin,lp);
-											cout << "Enter Brand        :" ;getline(cin,br);
-											cout << "Enter Model        :" ;getline(cin,md);
-											cout << "Enter Color        :" ;getline(cin,cl);
-											fileveh << user << ";" << lp << ";" << br << ";" << md << ";" << cl << endl;
-											cout << "Vehicle Register success!!"<<endl;cout << "Press any key to continue";_getch();system("cls");
-											fileveh.close();
-											time_t currentTime = time(nullptr);
-											tm *timeInfo = localtime(&currentTime);
-											filerg << "C" << pickLotID << ";" << user << ";" << lp << ";" << pickLotID << ";" << 2 << ";" 
-       											   	<< setfill('0') << setw(2) << timeInfo->tm_hour << ":" 
-       											   	<< setfill('0') << setw(2) << timeInfo->tm_min << " " 
-       												<< setfill('0') << setw(2) << timeInfo->tm_mday << "-" 
-      											 	<< setfill('0') << setw(2) << (timeInfo->tm_mon + 1) << "-" 
-       												<< timeInfo->tm_year + 1900 << endl;
-											break;
-										}
-										else if(park.GetLotID() == pickLotID &&park.GetStatus()==1 && park.GetArea()=='C'){
-											find=true;
-											cout<<"\nLotID already ordered!!!"<<endl;
-											cout<<"Press any key to continue...";_getch();system("cls");break;
-										}
-										else if(park.GetLotID()==pickLotID && park.GetArea()!='C'){
-											find=true;
-											cout<<"\nLotID is only avaiable for Area : C !!!!"<<endl;
-											cout<<"Press any key to continue...";_getch();system("cls");break;
-										}
-									}
-										if(!find){
-										cout<<"\nLotID not in list!!"<<endl;
-										cout<<"Press any key to continue...";_getch();system("cls");break;}
-        							break;
-								}
-								case 2:{
-									pl.Show(2);
-									break;
-								}
-								case 3:{
-									pl.Show(3);
-									break;
-								}
+							if(check == -1){
+								cout << "\nInvalid option!! Select again please"<<endl;
+								cout << "Press any key to continue"<<endl;_getch();system("cls");goto here;
 							}
+							Register(pl,veh,rg,user,check);
 							break;
 						}
 						case 2:{
-							pl.Show(1);
+							rg.Show(user);
 							_getch();
 							system("cls");
 							break;
@@ -263,3 +206,56 @@ void Accounts::Check(){
 		acc.Login();
 	}
 }
+
+void Accounts::Register(ParkingLots pl,Vehicles veh,Registrations rg,string user,int check){
+	string pickLotID,lp,md,br,cl;bool find=false;
+	char AreaTemp = ((check == 1) ? 'C' : ((check == 2) ? 'B' : 'A'));
+	cout << "---------------------"<<endl;
+	pl.Show(check);							
+	cout << "Nhap LotID can dat : ";getline(cin,pickLotID);
+	for(auto &park : listpark){
+		if(park.GetLotID() == pickLotID && park.GetStatus()==0 && park.GetArea()==AreaTemp){
+			find = true;
+			park.SetStatus(1);
+			cout << "Dang ki LotID " << pickLotID << " thanh cong!!"<<endl; cout << "Press any key to continue";_getch();system("cls");
+			ofstream filepl("ParkingLots.txt",ios::out);
+			ofstream fileveh("Vehicles.txt",ios::app);
+			ofstream filerg("Registrations.txt",ios::app);
+			for(auto &park:listpark){
+				filepl << park.GetLotID() << ";" << park.GetArea() << ";" << park.GetStatus() << endl;
+			}
+			filepl.close();
+			cout << "---- Vehice register ------"<<endl;
+			cout << "Enter LicensePlate :" ;getline(cin,lp);
+			cout << "Enter Brand        :" ;getline(cin,br);
+			cout << "Enter Model        :" ;getline(cin,md);
+			cout << "Enter Color        :" ;getline(cin,cl);
+			fileveh << user << ";" << lp << ";" << br << ";" << md << ";" << cl << endl;
+			cout << "Vehicle Register success!!"<<endl;cout << "Press any key to continue";_getch();system("cls");
+			fileveh.close();
+			time_t currentTime = time(nullptr);
+			tm *timeInfo = localtime(&currentTime);
+			filerg << AreaTemp << pickLotID << ";" << user << ";" << lp << ";" << pickLotID << ";" << check << ";" 
+       			<< setfill('0') << setw(2) << timeInfo->tm_hour << ":" 
+       			<< setfill('0') << setw(2) << timeInfo->tm_min << " " 
+       			<< setfill('0') << setw(2) << timeInfo->tm_mday << "-" 
+      			<< setfill('0') << setw(2) << (timeInfo->tm_mon + 1) << "-" 
+       			<< timeInfo->tm_year + 1900 << endl;
+			break;
+	}
+		else if(park.GetLotID() == pickLotID && park.GetStatus()==1 && park.GetArea()==AreaTemp){
+			find=true;
+			cout<<"\nLotID already ordered!!!"<<endl;
+			cout<<"Press any key to continue";_getch();system("cls");break;
+		}
+		else if(park.GetLotID()==pickLotID && park.GetArea()!=AreaTemp){
+			find=true;
+			cout<<"\nPlease select LotID avaiable for Area : " << AreaTemp<<endl;
+			cout<<"Press any key to continue";_getch();system("cls");break;
+		}
+	}
+		if(!find){
+		cout<<"\nLotID not in list!!"<<endl;
+		cout<<"Press any key to continue";_getch();system("cls");}
+}
+

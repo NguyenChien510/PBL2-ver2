@@ -15,5 +15,5 @@ class Registrations : public ParkingLots, public Vehicles
 		Registrations();
 		Registrations(string,string,string,string,int,int,string);
 		void ReadFromFile();
-		void Show();
+		void Show(string);
 };

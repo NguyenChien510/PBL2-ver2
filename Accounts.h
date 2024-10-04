@@ -19,4 +19,5 @@ class Accounts : public ParkingLots
 		bool Login();	
 		int checkinput(string); 
 		void Check();
+		void Register(ParkingLots,Vehicles,Registrations,string,int);
 };

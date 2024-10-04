@@ -23,7 +23,7 @@ void Registrations::ReadFromFile()
 	}
 	else
 	{
-		string regisid,lp,lotid,stime,etime,ownid;
+		string regisid,lp,lotid,stime,ownid;
 		int type, price;
 		while(getline(filein,regisid,';'))
 		{
@@ -31,8 +31,8 @@ void Registrations::ReadFromFile()
 			getline(filein,lp,';');
 			getline(filein,lotid,';');
 			filein>>type;filein.ignore();
-			getline(filein,stime,';');
-			price = (type == 0) ? DAILY : ((type == 1) ? WEEKLY : MONTHLY);
+			getline(filein,stime);
+			price = (type == 1) ? DAILY : ((type == 2) ? WEEKLY : MONTHLY);
  			Registrations regis(regisid,ownid,lp,lotid,type,price,stime);
 			listregis.push_back(regis);
 		}
@@ -46,17 +46,19 @@ Registrations::Registrations()
 	ReadFromFile();
 }
 
-void Registrations::Show()
+void Registrations::Show(string user)
 {
 	for(auto rg:listregis){
+	if(rg.OwnerID==user){
 	cout << "--------------------------------------"<<endl;
 	cout <<	"Registration ID : " << rg.RegistrationID << endl;
 	cout << "Owner        ID : " << rg.OwnerID<<endl;
-	cout << "License Plate   : " << rg.LicensePlate <<endl;
 	cout << "Lot          ID : " << rg.LotID << endl;
-	cout << "TicketType      : " <<((rg.TicketType == 0) ? "DAILY" : ((rg.TicketType ==1) ? "WEEKLY" : "MONTHLY") )<<endl;
+	cout << "License Plate   : " << rg.LicensePlate <<endl;
+	cout << "TicketType      : " <<((rg.TicketType == 1) ? "DAILY" : ((rg.TicketType ==2) ? "WEEKLY" : "MONTHLY") )<<endl;
 	cout << "Price           : " << rg.TicketPrice <<endl;
 	cout << "Start Time      : " <<rg.StartTime<<endl;
-	cout << "--------------------------------------"<<endl;
+	cout << "--------------------------------------"<<endl;	
+		}
 	}
 }
