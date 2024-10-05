@@ -1,9 +1,8 @@
 #include "Accounts.h"
-#include <windows.h>
 int main()
 {
-	system("color 3");
+//	system("color 3");
 	Accounts acc;
-	acc.Check();
+	acc.Welcome();
 	return 0;
 } 

@@ -56,7 +56,7 @@ Owners::Owners(){
 }
 void Owners::Show(string user)
 {
-	cout << "------Infomation------"<<endl;
+	cout << "-----------Infomation-----------"<<endl;
 	for(auto own : listown){
 		if(own.OwnerID == user)
 		{
@@ -64,6 +64,7 @@ void Owners::Show(string user)
 			cout << "Name     : " << own.Name << endl;
 			cout << "Phone    : " << own.Phone << endl;
 			cout << "Email    : " << own.Email << endl;
+	cout << "---------------------------------"<<endl;
 		}
 	}
 }

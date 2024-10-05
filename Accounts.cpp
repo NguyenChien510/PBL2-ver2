@@ -72,20 +72,15 @@ void Accounts::SetPassword(string pass){
  	this->password = pass;
 }
 
-bool Accounts::Login()
+bool Accounts::Login(string user,string pass)
 {
 	ReadFromFile();
-	string user,pass;
 	while(true)
 	{
-	cout << "----- SIGN IN -----"<<endl;
-	cout << "Username : ";getline(cin,user);
-	cout << "Password : ";getline(cin,pass);
 	for(auto acc : listacc)
 	{
 		if(acc.username == user && acc.password == pass && acc.role == 1)	//ADMIN
 		{
-			cout << "Login Success!!!!" << endl;
 				string option;
 				while(1)
 				{
@@ -149,7 +144,6 @@ bool Accounts::Login()
 						}
 						case 3:{
 							Edit(owner,user,pass);
-							cout << "Press any key to continue"<<endl;_getch();system("cls");
 							break;
 						}
 						default:
@@ -167,52 +161,266 @@ bool Accounts::Login()
 	}
 }
 
-
-void Accounts::Check(){
-	string option;
-	Accounts acc;int check;
-	do{
-	cout << "--------------------" << endl;
-	cout << "|      Welcome     |" << endl;
-	cout << "--------------------" << endl;
-	cout << "|    1.Dang Nhap   |" << endl;
-	cout << "|    2.Dang Ki     |" << endl;
-	cout << "--------------------" << endl;
-	cout << "Nhap lua chon: ";
-	getline(cin,option);
-	check = checkinput(option);
-	if(check == -1 || check > 2){
-		cout << "Nhap sai lua chon!!!!!"<<endl;
-		cout << "Vui long nhap lai!!!!!"<<endl;
-		cout << "Press Any Key To Continue......."<<endl<<endl;
-		_getch();
-		system("cls");
-	}
-	}while(check!= 1 && check!=2);
-	if(check == 1){
-		system("cls");
-		acc.Login();
-	}
-	else if(check == 2){
-		system("cls");
-		string user,pass,name,phone,mail;
-		cout << "------ SIGN UP ------" << endl;
-		cout << "Enter your username :"; getline(cin,user);
-		cout << "Enter your password :"; getline(cin,pass);
-		cout << "Enter your name     :"; getline(cin,name);
-		cout << "Enter your phone    :"; getline(cin,phone);
-		cout << "Enter your mail     :"; getline(cin,mail);
-		cout << "Sign up success!!\n";
-		_getch();system("cls");
-		ofstream file("Accounts.txt",ios::app);
-		file << user << ";" << pass << ";" << "0"<<endl;
-		file.close();
-		ofstream fileown("Owners.txt",ios::app);
-		fileown << user << ";" << name << ";" << phone << ";" << mail << endl;
-		fileown.close();
-		acc.Login();
-	}
+string GetPassword() {
+    string pass = "";
+    char ch;
+    while ((ch = _getch()) != '\r') { // '\r' là ki tu Enter
+        if (ch == '\b' && !pass.empty()) { // Xoa ki tu neu nhin Backspace
+            pass.pop_back();
+            cout << "\b \b"; // Xoa ki tu hien thi tren man hinh
+        } else if (ch != '\b') { // Neu khong phai ki tu Backspace
+            pass.push_back(ch);
+            cout << '*'; // Hien thi '' thay vi ki tu thuc te
+        }
+    }
+    cout << endl;
+    return pass;
 }
+
+void gotoxy(int x, int y) {
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+void setColor(int color) {
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}
+void drawButton(int x, int y, string label, bool isSelected) {
+    gotoxy(x, y);
+    if (isSelected) {
+        setColor(10); // Green color
+        cout << "[ " << label << " ]"; // Button is selected
+        setColor(7); // Return to default color
+    } else {
+        cout << "[ " << label << " ]"; // Button is not selected
+    }
+}
+void drawBox(int x, int y, int width, int height) {
+    // Ve khung dang nhap
+    gotoxy(x, y);
+    cout << char(218); // Goc tren trai
+    for (int i = 0; i < width - 2; i++) cout << char(196); // Duong ngang
+    cout << char(191); // Goc tren phai
+
+    for (int i = 0; i < height - 2; i++) {
+        gotoxy(x, y + i + 1);
+        cout << char(179); // Duong doc ben trai
+        gotoxy(x + width - 1, y + i + 1);
+        cout << char(179); // Duong doc ben phai
+    }
+
+    gotoxy(x, y + height - 1);
+    cout << char(192); // Goc duoi trai
+    for (int i = 0; i < width - 2; i++) cout << char(196); // Duong ngang duoi
+    cout << char(217); // Goc duoi phai
+}
+
+void Accounts::loginForm() {
+    here:
+    string user, pass;
+    char ch;
+    int formWidth = 40;
+    int formHeight = 10;
+    int startX = 35;
+    int startY = 5;
+    int selectedOption = 0; // 0: Login, 1: Back
+    bool isSelected[2] = { true, false }; // To track the selected option
+    while (true) {
+        drawBox(startX, startY, formWidth, formHeight);
+        gotoxy(startX + 12, startY + 1);
+        cout << "HE THONG BAI DO XE";
+        gotoxy(startX + 5, startY + 3);
+        cout << "Username: ";
+        gotoxy(startX + 5, startY + 4);
+        cout << "Password: ";
+        drawButton(startX + 15, startY + 6, "Login", isSelected[0]);
+        drawButton(startX + 15, startY + 8, "Back", isSelected[1]);
+        // Capture key press
+        char key = _getch(); 
+        if (key == 72) { // Up arrow key
+            isSelected[selectedOption] = false; // Deselect
+            selectedOption = (selectedOption == 0) ? 1 : 0; // Toggle selection
+            isSelected[selectedOption] = true; // Select again
+        } else if (key == 80) { // Down arrow key
+            isSelected[selectedOption] = false; // Deselect
+            selectedOption = (selectedOption == 1) ? 0 : 1; // Toggle selection
+            isSelected[selectedOption] = true; // Select again
+        } else if (key == 13) { // Enter key
+            if (selectedOption == 0) {
+                gotoxy(startX + 15, startY + 3);
+                getline(cin, user);
+                gotoxy(startX + 15, startY + 4);
+                pass = GetPassword();
+                bool validLogin = false;
+                ReadFromFile();
+                for (auto acc : listacc) {
+                    if (user == acc.username && pass == acc.password) {
+                        gotoxy(startX + 12, startY + 6);
+                        cout << "Login successful!";
+                        _getch();
+                        system("cls");
+                        Login(user, pass);
+                        validLogin = true;
+                        break;
+                    }
+                }
+                if (!validLogin) {
+                    gotoxy(startX + 5, startY + 6);
+                    cout << "Invalid username or password!";
+                    _getch();
+                    system("cls");
+                    continue; // Redraw the login form
+                }
+            } else if (selectedOption == 1) {
+                system("cls");
+                Welcome();
+                return;
+            }
+        }
+    }
+}
+
+void Accounts::Welcome() {
+    const int boxWidth = 40;
+    const int boxHeight = 8;
+    const int boxX = 35;
+    const int boxY = 5;
+    int selectedValue;
+    drawBox(boxX, boxY, boxWidth, boxHeight);
+    int selectedOption = 0; // 0: Sign In, 1: Sign Up
+    bool isSelected[2] = { true, false }; // To track the selected button
+    while (true) {
+    	gotoxy(boxX + 11, boxY + 1);
+    	cout << "HE THONG BAI DO XE";
+        drawButton(boxX + 14, boxY + 3, "Sign In", isSelected[0]);
+        drawButton(boxX + 14, boxY + 5, "Sign Up", isSelected[1]);
+        // Capture key press
+        char key = _getch(); 
+        if (key == 72) { // Up arrow key
+            isSelected[selectedOption] = false; // Deselect
+            selectedOption = (selectedOption == 0) ? 1 : 0; // Switch to the upper option
+            isSelected[selectedOption] = true; // Select again
+        } else if (key == 80) { // Down arrow key
+            isSelected[selectedOption] = false; // Deselect
+            selectedOption = (selectedOption == 1) ? 0 : 1; // Switch to the lower option
+            isSelected[selectedOption] = true; // Select again
+        } else if (key == 13) { // Enter key
+            selectedValue = (selectedOption == 0) ? 1 : 2; // Assign value to variable
+            break; 
+        }
+    }
+    if(selectedValue == 1){
+    	system("cls");loginForm();
+	}
+	else if (selectedValue == 2) {
+    system("cls");
+    int formWidth = 50;
+    int formHeight = 17;
+    int startX = 30;
+    int startY = 3;
+    int selectedOption = 0; // 0: Sign Up, 1: Back
+    bool isSelected[2] = { true, false }; // To track the selected option
+    string user, pass, name, phone, mail;
+    while (true) {
+        drawBox(startX, startY, formWidth, formHeight); 
+        gotoxy(startX + 15, startY + 1);
+        cout << "------ SIGN UP ------";
+        gotoxy(startX + 5, startY + 3);
+        cout << "Username: ";
+        gotoxy(startX + 5, startY + 5);
+        cout << "Password: ";
+        gotoxy(startX + 5, startY + 7);
+        cout << "Name    : ";
+        gotoxy(startX + 5, startY + 9);
+        cout << "Phone   : ";
+        gotoxy(startX + 5, startY + 11);
+        cout << "Mail    : ";
+        drawButton(startX + 19, startY + 13, "Sign Up", isSelected[0]);
+        drawButton(startX + 19, startY + 15, "Back", isSelected[1]);
+        // Capture key press
+        char key = _getch();
+        if (key == 72) { // Up arrow key
+            isSelected[selectedOption] = false; // Deselect
+            selectedOption = (selectedOption == 0) ? 1 : 0; // Toggle selection
+            isSelected[selectedOption] = true; // Select again
+        } else if (key == 80) { // Down arrow key
+            isSelected[selectedOption] = false; // Deselect
+            selectedOption = (selectedOption == 1) ? 0 : 1; // Toggle selection
+            isSelected[selectedOption] = true; // Select again
+        } else if (key == 13) {
+            if (selectedOption == 0) {
+                gotoxy(startX + 15, startY + 3);
+                getline(cin, user);
+                gotoxy(startX + 15, startY + 5);
+                getline(cin, pass);
+                gotoxy(startX + 15, startY + 7);
+                getline(cin, name);
+                gotoxy(startX + 15, startY + 9);
+                getline(cin, phone);
+                gotoxy(startX + 15, startY + 11);
+                getline(cin, mail);
+                // Display success message
+                gotoxy(startX + 15, startY + 13);
+                cout << "Sign up success!!";
+                _getch();
+                system("cls");
+                ofstream file("Accounts.txt", ios::app);
+                file << user << ";" << pass << ";" << "0" << endl;
+                file.close();
+                ofstream fileown("Owners.txt", ios::app);
+                fileown << user << ";" << name << ";" << phone << ";" << mail << endl;
+                fileown.close();
+                Welcome();
+                return;
+            } else if (selectedOption == 1) {
+                system("cls");
+                Welcome();
+                return;
+            }
+        }
+    }
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void Accounts::Register(ParkingLots pl,Vehicles veh,Registrations rg,string user,int check){
 	string pickLotID,lp,md,br,cl;bool find=false;
@@ -292,7 +500,6 @@ void Accounts::Edit(Owners owner,string user,string pass)
 				}
 			}
 			cout << "Update Name Success!!"<<endl;
-			cout << "Press any key to continue";_getch();system("cls");
 			break;
 		}
 		case 2:{
@@ -304,7 +511,6 @@ void Accounts::Edit(Owners owner,string user,string pass)
 				}
 			}
 			cout << "Update Phone Success!!"<<endl;
-			cout << "Press any key to continue";_getch();system("cls");
 			break;
 		}
 		case 3:{
@@ -316,7 +522,6 @@ void Accounts::Edit(Owners owner,string user,string pass)
 				}
 			}
 			cout << "Update Email Success!!"<<endl;
-			cout << "Press any key to continue";_getch();system("cls");
 			break;
 		}
 		case 4:{
@@ -337,7 +542,6 @@ void Accounts::Edit(Owners owner,string user,string pass)
 				}
 				fileacc.close();
 				cout << "Update Password Success!!"<<endl;
-				cout << "Press any key to continue";_getch();system("cls");
 			}
 			break;
 		}

@@ -1,4 +1,3 @@
 102230061;43A-12345;Toyota;Camry;White
 102230062;74A-01234;Honda;Civic;Black
 102230091;92A-99999;Mercedes;C300;Pink
-102230061;74AB-01718;yamaha;50cc;black
