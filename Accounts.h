@@ -5,7 +5,7 @@
 #include <iomanip>
 #include "Registrations.h"
 using namespace std;
-class Accounts : public ParkingLots
+class Accounts : public ParkingLots , public Owners
 {
 	private:
 		string username;
@@ -20,4 +20,6 @@ class Accounts : public ParkingLots
 		int checkinput(string); 
 		void Check();
 		void Register(ParkingLots,Vehicles,Registrations,string,int);
+		void Edit(Owners,string,string);
+		void SetPassword(string);
 };

@@ -68,7 +68,9 @@ int	Accounts::checkinput(string s){
 	return stoi(s);
 }
 
-
+void Accounts::SetPassword(string pass){
+ 	this->password = pass;
+}
 
 bool Accounts::Login()
 {
@@ -119,7 +121,7 @@ bool Accounts::Login()
 					getline(cin,option);
 					int check = checkinput(option);
 					if(check >=1 && check <= 5) system("cls");
-					ParkingLots pl;Vehicles veh;Registrations rg;
+					ParkingLots pl;Vehicles veh;Registrations rg;Owners owner;
 					switch(check)
 					{
 						case 1:{
@@ -143,6 +145,11 @@ bool Accounts::Login()
 							rg.Show(user);
 							_getch();
 							system("cls");
+							break;
+						}
+						case 3:{
+							Edit(owner,user,pass);
+							cout << "Press any key to continue"<<endl;_getch();system("cls");
 							break;
 						}
 						default:
@@ -259,3 +266,90 @@ void Accounts::Register(ParkingLots pl,Vehicles veh,Registrations rg,string user
 		cout<<"Press any key to continue";_getch();system("cls");}
 }
 
+void Accounts::Edit(Owners owner,string user,string pass)
+{
+	here:
+	string name,phone,email,oldpass,newpass,option;
+	owner.Show(user);
+	cout << endl << endl;
+	cout << "------Select information to update---"<<endl;
+	cout << "*          1.Name                   *"<<endl;
+	cout << "*          2.Phone                  *"<<endl;
+	cout << "*          3.Email                  *"<<endl;
+	cout << "*          4.Change Password        *"<<endl;
+	cout << "*          5.Exit                   *"<<endl;
+	cout << "-------------------------------------"<<endl;
+	cout << "Select : ";
+	getline(cin,option);
+	int check = checkinput(option);
+	switch(check){
+		case 1:{
+			cout << "Enter new Name : ";
+			getline(cin,name);
+			for(auto &own : listown){
+				if(own.GetOwnerID() == user){
+					own.SetName(name);
+				}
+			}
+			cout << "Update Name Success!!"<<endl;
+			cout << "Press any key to continue";_getch();system("cls");
+			break;
+		}
+		case 2:{
+			cout << "Enter new Phone : ";
+			getline(cin,phone);
+			for(auto &own : listown){
+				if(own.GetOwnerID() == user){
+					own.SetPhone(phone);
+				}
+			}
+			cout << "Update Phone Success!!"<<endl;
+			cout << "Press any key to continue";_getch();system("cls");
+			break;
+		}
+		case 3:{
+			cout << "Enter new email : ";
+			getline(cin,email);
+			for(auto &own : listown){
+				if(own.GetOwnerID() == user){
+					own.SetEmail(email);
+				}
+			}
+			cout << "Update Email Success!!"<<endl;
+			cout << "Press any key to continue";_getch();system("cls");
+			break;
+		}
+		case 4:{
+			cout << "Enter old password : ";getline(cin,oldpass);
+			if(oldpass != pass){
+				cout << "Wrong Password!!!"<<endl;cout << "Press any key to continue";_getch();system("cls");goto here;
+			}
+			else{
+				cout << "Enter new password : ";getline(cin,newpass);
+				for(auto &acc : listacc){
+					if(acc.username == user){
+						acc.SetPassword(newpass);break;
+					}
+				}
+				ofstream fileacc("Accounts.txt",ios::out);
+				for(auto acc : listacc){
+					fileacc << username << ";" << password << ";" << role << endl;
+				}
+				fileacc.close();
+				cout << "Update Password Success!!"<<endl;
+				cout << "Press any key to continue";_getch();system("cls");
+			}
+			break;
+		}
+		default:{
+			cout << "Invalid Option!!!"<<endl;
+			cout << "Press any key to continue"<<endl;_getch();system("cls");
+			break;
+		}
+	}
+	ofstream file("Owners.txt",ios::out);
+	for(auto own:listown){
+		file << own.GetOwnerID() <<";"<<own.GetName() << ";" << own.GetPhone() << ";" << own.GetEmail() << endl;
+	}
+	file.close();
+}
