@@ -17,6 +17,7 @@ class Accounts : public ParkingLots , public Owners
 		Accounts();
 		Accounts(string,string,bool);
 		void ReadFromFile();
+		void Show();
 		bool Login(string,string);	
 		int checkinput(string); 
 		void Check();
@@ -25,4 +26,6 @@ class Accounts : public ParkingLots , public Owners
 		void SetPassword(string);
 		void loginForm();
 		void Welcome();
+		void UserInterface(string,string);
+		void AdminInterface(string,string);
 };

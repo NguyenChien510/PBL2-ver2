@@ -1,4 +1,5 @@
 #include "Owners.h"
+#include <iomanip>
 Owners::Owners(string id,string name,string phone,string email)
 {
 	this->OwnerID = id;
@@ -30,6 +31,7 @@ void Owners::SetEmail(string mail){
 }
 void Owners::ReadFromFile()
 {
+	listown.clear();
 	ifstream filein("Owners.txt");
 	if(!filein.is_open())
 	{
@@ -56,15 +58,27 @@ Owners::Owners(){
 }
 void Owners::Show(string user)
 {
-	cout << "-----------Infomation-----------"<<endl;
-	for(auto own : listown){
-		if(own.OwnerID == user)
-		{
-			cout << "Owner ID : " << own.OwnerID << endl;
-			cout << "Name     : " << own.Name << endl;
-			cout << "Phone    : " << own.Phone << endl;
-			cout << "Email    : " << own.Email << endl;
-	cout << "---------------------------------"<<endl;
+	cout<< setw(15) << "Owner ID" << " | "
+        << setw(20) << "Name" << " | "
+        << setw(15) << "Phone" << " | "
+        << setw(25) << "Email" << endl;
+	cout<< setfill('-') << setw(84) << "-" << setfill(' ') << endl;
+	if (user == "admin") {
+    for (auto& own : listown) {
+    	cout<< setw(15) << own.OwnerID << " | "
+            << setw(20) << own.Name << " | "
+            << setw(15) << own.Phone << " | "
+        	<< setw(25) << own.Email << endl;
+        }
+    }
+    else{
+    	for (auto& own : listown) {
+        if (own.OwnerID == user) {
+            cout<< setw(15) << own.OwnerID << " | "
+                << setw(20) << own.Name << " | "
+                << setw(15) << own.Phone << " | "
+                << setw(25) << own.Email << endl;
+			}
 		}
 	}
 }

@@ -13,5 +13,9 @@ class Vehicles : public Owners
 		Vehicles(string,string,string,string,string);
 		string GetOwnerID();
 		string GetLicensePlate();
+		string GetBrand();
+		string GetModel();
+		string GetColor();
 		void ReadFromFile();
+		void Show();
 };

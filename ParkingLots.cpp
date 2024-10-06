@@ -1,4 +1,6 @@
 #include "ParkingLots.h"
+#include <iomanip>
+#define ADMIN 4
 ParkingLots::ParkingLots(string ID,char area,bool status)
 {
 	this->LotID = ID;
@@ -7,6 +9,7 @@ ParkingLots::ParkingLots(string ID,char area,bool status)
 }
 void ParkingLots::ReadFromFile()
 {
+	listpark.clear();
 	ifstream filein("ParkingLots.txt");
 	if(!filein.is_open())
 	{
@@ -50,51 +53,29 @@ char ParkingLots::GetArea()
 }
 void ParkingLots::Show(int option)
 {
-	switch(option)
-	{
-		case 1:
+	char AreaTemp = ((option == 1) ? 'C' : ((option == 2) ? 'B' : 'A'));
+	if(option == 1 || option == 2 || option ==3){
 			for(auto park:listpark)
 		{
-			if(park.Area == 'C'){
+			if(park.Area == AreaTemp){
 			cout << "LotID : " << park.LotID << endl;
 			cout << "Area  : " << park.Area  << endl;
 			cout << "Status: " << ((park.Status) ? "ORDER" : "EMPTY") << endl;
 			cout << "-------------------"<<endl;
 			}
 		}
-			break;
-		case 2:
-			for(auto park:listpark)
-		{
-			if(park.Area == 'B'){
-			cout << "LotID : " << park.LotID << endl;
-			cout << "Area  : " << park.Area  << endl;
-			cout << "Status: " << ((park.Status) ? "ORDER" : "EMPTY") << endl;
-			cout << "-------------------"<<endl;
-			}
-		}
-			break;
-		case 3:
-			for(auto park:listpark)
-		{
-			if(park.Area == 'A'){
-			cout << "LotID : " << park.LotID << endl;
-			cout << "Area  : " << park.Area  << endl;
-			cout << "Status: " << ((park.Status) ? "ORDER" : "EMPTY") << endl;
-			cout << "-------------------"<<endl;
-			}
-		}
-			break;
-		case 4:
-			for(auto park:listpark)
-		{
-			cout << "LotID : " << park.LotID << endl;
-			cout << "Area  : " << park.Area  << endl;
-			cout << "Status: " << ((park.Status) ? "ORDER" : "EMPTY") << endl;
-			cout << "-------------------"<<endl;
-		}
-			cout << "Nhap LotID can xem : ";
-			break;
 	}
-
+	else if(option == ADMIN){
+		cout<< setw(4) << "Lot ID" << " | "
+        << setw(1) << "Area" << " | "
+        << setw(5) << "Status" << endl;
+	cout<< setfill('-') << setw(24) << "-" << setfill(' ') << endl;
+    for (auto& park : listpark) {
+    	cout<< setw(6) << park.LotID<< " | "
+            << setw(4) << park.Area <<" | "
+        	<< setw(5) << (park.Status == 0 ? "EMPTY" : "ORDERED") << endl;
+        }
+	}
 }
+
+

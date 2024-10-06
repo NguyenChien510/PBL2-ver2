@@ -1,182 +1,6 @@
 #include "Accounts.h"
 #include <fstream>
-
-Accounts::Accounts(string username,string password,bool role)
-{
-	this->username = username;
-	this->password = password;
-	this->role = role;
-}
-
-Accounts::Accounts() {}
-
-void Accounts::ReadFromFile()
-{
-	ifstream filein("Accounts.txt");
-	if(filein.is_open())
-	{
-		string user,pass;
-		bool role;
-		while(!filein.fail())
-		{
-			getline(filein,user,';');
-			getline(filein,pass,';');
-			filein>>role;
-			filein.ignore();
-			Accounts acc(user,pass,role);
-			listacc.push_back(acc);
-		}
-		filein.close();
-	}
-	else cout << "Cannot open file Accounts.txt" << endl;
-}
-
-void AdminInterface()
-{
-	cout << "-------------- QUAN LI BAI DO XE ---------------"<<endl;
-	cout << "*               1.Them ve moi                  *"<<endl;
-	cout << "*               2.Xem danh sach bai do         *"<<endl;
-	cout << "*               3.Chinh sua ve                 *"<<endl;
-	cout << "*               4.Xoa ve                       *"<<endl;
-	cout << "*               5.Thong ke                     *"<<endl;
-	cout << "*               6.Dang xuat                    *"<<endl;
-	cout << "*               7.Thoat                        *"<<endl;
-	cout << "------------------------------------------------"<<endl;
-	cout << "Nhap lua chon : ";
-}
-
-void UserInterface()
-{
-	cout << "-------------- CHUC NANG -----------------"<<endl;
-	cout << "*               1.Dat ve                 *"<<endl;
-	cout << "*               2.Xem ve                 *"<<endl;
-	cout << "*               3.Chinh sua              *"<<endl;
-	cout << "*               4.Dang xuat              *"<<endl;
-	cout << "*               5.Thoat                  *"<<endl;
-	cout << "LUU Y : Moi user chi dang ki toi da 3 ve!!"<<endl;
-	cout << "-----------------------------------------------"<<endl;
-	cout <<"Nhap lua chon : ";
-}
-
-int	Accounts::checkinput(string s){
-	for(char c:s){
-		if(!isdigit(c)) return -1;
-	}
-	if(s=="") return -1;
-	else if(s.length()>1) return -1;
-	else
-	return stoi(s);
-}
-
-void Accounts::SetPassword(string pass){
- 	this->password = pass;
-}
-
-bool Accounts::Login(string user,string pass)
-{
-	ReadFromFile();
-	while(true)
-	{
-	for(auto acc : listacc)
-	{
-		if(acc.username == user && acc.password == pass && acc.role == 1)	//ADMIN
-		{
-				string option;
-				while(1)
-				{
-					AdminInterface();
-					getline(cin,option);
-					int check = checkinput(option);
-					system("cls");
-					switch(check)
-					{
-						case 1:
-							cout << "------ TAO VE MOI ------"<<endl;
-							
-							break;
-						case 2:
-							cout << "------ DANH SANH ------"<<endl;
-							ParkingLots pl;
-							pl.Show(4);
-							cout <<endl<<endl<<"BAM PHIM BAT KI DE QUAY TRO LAI....."<<endl;
-                    		_getch();
-                    		system("cls");
-							break;
-						
-					}
-				}
-			}
-			else if(acc.username == user && acc.password == pass && acc.role == 0)   //USER
-			{
-				system("cls");
-				string option;
-				while(1)
-				{
-					UserInterface();
-					getline(cin,option);
-					int check = checkinput(option);
-					if(check >=1 && check <= 5) system("cls");
-					ParkingLots pl;Vehicles veh;Registrations rg;Owners owner;
-					switch(check)
-					{
-						case 1:{
-							here:
-							cout << "-------- ORDER TICKET -------"<<endl;
-							cout << "*         1.DAILY           *"<<endl;
-							cout << "*         2.WEEKLY          *"<<endl;
-							cout << "*         3.MONTHLY         *"<<endl;
-							cout << "-----------------------------"<<endl;
-							cout << "SELECT : ";
-							getline(cin,option);
-							int check = checkinput(option);
-							if(check == -1){
-								cout << "\nInvalid option!! Select again please"<<endl;
-								cout << "Press any key to continue"<<endl;_getch();system("cls");goto here;
-							}
-							Register(pl,veh,rg,user,check);
-							break;
-						}
-						case 2:{
-							rg.Show(user);
-							_getch();
-							system("cls");
-							break;
-						}
-						case 3:{
-							Edit(owner,user,pass);
-							break;
-						}
-						default:
-							cout << "\nVui long nhap dung so lua chon!!"<<endl;
-							cout << "Press any key to coninue..."<<endl;
-							_getch();
-							system("cls");
-							break;	
-					}
-				}
-				
-			}
-		}
-		cout << "Invalid username or password!!!"<<endl;
-	}
-}
-
-string GetPassword() {
-    string pass = "";
-    char ch;
-    while ((ch = _getch()) != '\r') { // '\r' là ki tu Enter
-        if (ch == '\b' && !pass.empty()) { // Xoa ki tu neu nhin Backspace
-            pass.pop_back();
-            cout << "\b \b"; // Xoa ki tu hien thi tren man hinh
-        } else if (ch != '\b') { // Neu khong phai ki tu Backspace
-            pass.push_back(ch);
-            cout << '*'; // Hien thi '' thay vi ki tu thuc te
-        }
-    }
-    cout << endl;
-    return pass;
-}
-
+void UserInterface();
 void gotoxy(int x, int y) {
     COORD coord;
     coord.X = x;
@@ -214,6 +38,100 @@ void drawBox(int x, int y, int width, int height) {
     cout << char(192); // Goc duoi trai
     for (int i = 0; i < width - 2; i++) cout << char(196); // Duong ngang duoi
     cout << char(217); // Goc duoi phai
+}
+
+void Accounts::Show() {
+    cout << setw(15) << "Username" << " | "
+         << setw(10) << "Password" << " | "
+         << setw(10) << "Role" << endl;
+    cout << setfill('-') << setw(41) << "-" << setfill(' ') << endl;
+    for (auto acc : listacc) {
+        cout << setw(16) << acc.username << "|"
+             << setw(12) << acc.password << "|"
+             << setw(10) << (acc.role == 0 ? "User" : "Admin") << endl;
+    }
+}
+
+
+
+Accounts::Accounts(string username,string password,bool role)
+{
+	this->username = username;
+	this->password = password;
+	this->role = role;
+}
+
+Accounts::Accounts() {}
+
+void Accounts::ReadFromFile()
+{
+	ifstream filein("Accounts.txt");
+	if(filein.is_open())
+	{
+		listacc.clear();
+		string user,pass;
+		bool role;
+		while(getline(filein,user,';'))
+		{
+			getline(filein,pass,';');
+			filein>>role;
+			filein.ignore();
+			Accounts acc(user,pass,role);
+			listacc.push_back(acc);
+		}
+		filein.close();
+	}
+	else cout << "Cannot open file Accounts.txt" << endl;
+}
+
+
+
+int	Accounts::checkinput(string s){
+	for(char c:s){
+		if(!isdigit(c)) return -1;
+	}
+	if(s=="") return -1;
+	else if(s.length()>1) return -1;
+	else
+	return stoi(s);
+}
+
+void Accounts::SetPassword(string pass){
+ 	this->password = pass;
+}
+
+bool Accounts::Login(string user,string pass)
+{
+	ReadFromFile();
+	while(true)
+	{
+	for(auto acc : listacc)
+	{
+		if(acc.username == user && acc.password == pass && acc.role == 1)	//ADMIN
+		{
+			while(1) AdminInterface(user,pass);
+		}
+		else if(acc.username == user && acc.password == pass && acc.role == 0)   //USER
+		{
+			while(1) UserInterface(user,pass);
+		}
+	}
+}
+}
+string GetPassword() {
+    string pass = "";
+    char ch;
+    while ((ch = _getch()) != '\r') { // '\r' là ki tu Enter
+        if (ch == '\b' && !pass.empty()) { // Xoa ki tu neu nhin Backspace
+            pass.pop_back();
+            cout << "\b \b"; // Xoa ki tu hien thi tren man hinh
+        } else if (ch != '\b') { // Neu khong phai ki tu Backspace
+            pass.push_back(ch);
+            cout << '*'; // Hien thi '' thay vi ki tu thuc te
+        }
+    }
+    cout << endl;
+    return pass;
 }
 
 void Accounts::loginForm() {
@@ -384,43 +302,222 @@ void Accounts::Welcome() {
 
 }
 
+void Accounts::AdminInterface(string user,string pass)
+{
+	ParkingLots pl;Vehicles veh;Registrations rg;Owners owner;
+	const int boxWidth = 43;
+    const int boxHeight = 18;
+    const int boxX = 30;
+    const int boxY = 5;
+    int selectedOption = 1; // Track the selected option
+    bool isSelected[8] = { false,true,false, false, false, false,false,false };
+    while (true) {
+        drawBox(boxX, boxY, boxWidth, boxHeight);
+        gotoxy(boxX + 2, boxY + 1);
+        cout << "----------- QUAN LI BAI DO XE ---------";
+        drawButton(boxX + 12, boxY + 3,  "1. Tao Ve Moi", isSelected[1]);
+        drawButton(boxX + 12, boxY + 5,  "2. Xem Danh Sach", isSelected[2]);
+        drawButton(boxX + 12, boxY + 7,  "3. Chinh sua", isSelected[3]);
+        drawButton(boxX + 12, boxY + 9,  "4. Xoa", isSelected[4]);
+        drawButton(boxX + 12, boxY + 11, "5. Thong ke", isSelected[5]);
+        drawButton(boxX + 12, boxY + 13, "6. Dang xuat", isSelected[6]);
+        drawButton(boxX + 12, boxY + 15, "7. Thoat", isSelected[7]);
+        char key = _getch();
+        if (key == 72) { // Up arrow key
+            isSelected[selectedOption] = false; // Deselect current option
+            selectedOption = (selectedOption == 1) ? 7 : selectedOption - 1; // Move up
+            isSelected[selectedOption] = true; // Select the new option
+        } else if (key == 80) { // Down arrow key
+            isSelected[selectedOption] = false; // Deselect current option
+            selectedOption = (selectedOption == 7) ? 1 : selectedOption + 1; // Move down
+            isSelected[selectedOption] = true; // Select the new option
+        } else if (key == 13) { // Enter key
+            switch(selectedOption){
+            	case 1:{
+            		
+					break;
+				}
+				case 2:{
+					system("cls");
+					const int boxWidth = 43;
+    				const int boxHeight = 16;
+    				const int boxX = 30;
+    				const int boxY = 5;
+    				int selectedOption = 1; // Track the selected option
+    				bool isSelected[7] = { false,true,false, false, false, false,false };
+    				while(true){
+    					drawBox(boxX,boxY,boxWidth,boxHeight);
+    					gotoxy(boxX+2,boxY+1);
+    					cout << "---------------- XEM ------------------";
+    					drawButton(boxX + 12, boxY + 3,  "1. Accounts", isSelected[1]);
+    					drawButton(boxX + 12, boxY + 5,  "2. Owners", isSelected[2]);
+    					drawButton(boxX + 12, boxY + 7,  "3. Parking Lots", isSelected[3]);
+    					drawButton(boxX + 12, boxY + 9,  "4. Vehicles", isSelected[4]);
+    					drawButton(boxX + 12, boxY + 11,  "5. Registrations", isSelected[5]);
+    					drawButton(boxX + 12, boxY + 13,  "6. Back", isSelected[6]);
+    					char key = _getch();
+    					if(key == 72){
+    						isSelected[selectedOption] = false;
+    						selectedOption = (selectedOption == 1) ? 6 : selectedOption - 1;
+    						isSelected[selectedOption] = true;
+						}
+						else if(key == 80){
+							isSelected[selectedOption] = false;
+							selectedOption = (selectedOption == 6) ? 1 : selectedOption + 1;
+							isSelected[selectedOption] = true;
+						}
+						else if(key == 13){
+							switch(selectedOption){
+								case 1:{
+									system("cls");
+									Show();_getch();system("cls");
+									break;
+								}
+								case 2:{
+									system("cls");owner.ReadFromFile();
+									owner.Show(user);_getch();system("cls");
+									break;
+								}
+								case 3:{
+									system("cls");pl.ReadFromFile();
+									pl.Show(4);_getch();system("cls");
+									break;
+								}
+								case 4:{
+									system("cls");veh.ReadFromFile();
+									veh.Show();_getch();system("cls");
+									break;
+								}
+								case 5:{
+									system("cls");veh.ReadFromFile();
+									veh.Show();_getch();system("cls");
+									break;
+								}
+								case 6:{
+									system("cls");
+									AdminInterface(user,pass);
+									break;
+								}
+							}
+						}
+					}
+					break;
+				}
+				case 3:{
+					
+					break;
+				}
+				case 4:{
+					
+					break;
+				}
+				case 5:{
+					
+					break;
+				}
+				case 6:{
+					system("cls");Welcome();
+					break;
+				}
+				case 7:{
+					exit(0);
+					break;
+				}
+			}
+		}
+	}
+}
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void Accounts::UserInterface(string user,string pass) {
+	ParkingLots pl;Vehicles veh;Registrations rg;Owners owner;
+    // Define the dimensions and position of the user interface
+    const int boxWidth = 43;
+    const int boxHeight = 12;
+    const int boxX = 30;
+    const int boxY = 5;
+    int selectedOption = 1; // Track the selected option
+    bool isSelected[6] = { false,true,false, false, false, false }; // Track which button is selected
+    while (true) {
+        drawBox(boxX, boxY, boxWidth, boxHeight);
+        gotoxy(boxX + 3, boxY + 1);
+        cout << "-------------- MENU --------------";
+        drawButton(boxX + 13, boxY + 3, "1. Dat ve", isSelected[1]);
+        drawButton(boxX + 13, boxY + 4, "2. Xem ve", isSelected[2]);
+        drawButton(boxX + 13, boxY + 5, "3. Chinh sua", isSelected[3]);
+        drawButton(boxX + 13, boxY + 6, "4. Dang xuat", isSelected[4]);
+        drawButton(boxX + 13, boxY + 7, "5. Thoat", isSelected[5]);
+        gotoxy(boxX + 1, boxY + 9);
+        cout << "LUU Y: Moi user chi dang ky toi da 3 ve!!";
+        // Capture key press
+        char key = _getch();
+        if (key == 72) { // Up arrow key
+            isSelected[selectedOption] = false; // Deselect current option
+            selectedOption = (selectedOption == 1) ? 5 : selectedOption - 1; // Move up
+            isSelected[selectedOption] = true; // Select the new option
+        } else if (key == 80) { // Down arrow key
+            isSelected[selectedOption] = false; // Deselect current option
+            selectedOption = (selectedOption == 5) ? 1 : selectedOption + 1; // Move down
+            isSelected[selectedOption] = true; // Select the new option
+        } else if (key == 13) { // Enter key
+            // Handle the selected option
+            switch (selectedOption) {
+                case 1:{
+                	system("cls");
+                    const int boxWidth = 43;
+    				const int boxHeight = 12;
+    				const int boxX = 30;
+    				const int boxY = 5;
+    				int selectedOption = 1; // Track the selected option
+    				bool isSelected[4] = { false,true, false, false }; // Track which button is selected
+    				while (true) {
+        			drawBox(boxX, boxY, boxWidth, boxHeight);
+        			gotoxy(boxX + 3, boxY + 1);
+        			cout << "-------------- ORDER --------------";
+        			drawButton(boxX + 14, boxY + 3, "1. DAILY", isSelected[1]);
+        			drawButton(boxX + 14, boxY + 5, "2. WEEKLY", isSelected[2]);
+        			drawButton(boxX + 14, boxY + 7, "3. MONTHLY", isSelected[3]);
+        			drawButton(boxX + 17, boxY + 9, "BACK",isSelected[4]);
+        			// Capture key press
+        			char key = _getch();
+        			if (key == 72) { // Up arrow key
+            			isSelected[selectedOption] = false; // Deselect current option
+            			selectedOption = (selectedOption == 1) ? 4 : selectedOption - 1; // Move up
+            			isSelected[selectedOption] = true; // Select the new option
+        			} else if (key == 80) { // Down arrow key
+            			isSelected[selectedOption] = false; // Deselect current option
+            			selectedOption = (selectedOption == 4) ? 1 : selectedOption + 1; // Move down
+            			isSelected[selectedOption] = true; // Select the new option
+        			} else if (key == 13) { // Enter key
+        				system("cls");
+        				if(selectedOption == 4) UserInterface(user,pass);
+        				else Register(pl,veh,rg,user,selectedOption);
+        				}
+   					}
+   				}
+                    break;
+                case 2:
+                	system("cls");
+                    rg.Show(user);
+                    break;
+                case 3:
+                	system("cls");
+                    Edit(owner,user,pass);
+                    break;
+                case 4:
+                	system("cls");
+                    Welcome();
+                    break;
+                case 5:
+                    exit(0); // Exit the program
+            }
+            _getch(); // Wait for a key press before continuing
+            system("cls"); // Clear the screen
+        }
+    }
+}
 
 void Accounts::Register(ParkingLots pl,Vehicles veh,Registrations rg,string user,int check){
 	string pickLotID,lp,md,br,cl;bool find=false;
@@ -474,54 +571,64 @@ void Accounts::Register(ParkingLots pl,Vehicles veh,Registrations rg,string user
 		cout<<"Press any key to continue";_getch();system("cls");}
 }
 
+
 void Accounts::Edit(Owners owner,string user,string pass)
 {
 	here:
-	string name,phone,email,oldpass,newpass,option;
 	owner.Show(user);
-	cout << endl << endl;
-	cout << "------Select information to update---"<<endl;
-	cout << "*          1.Name                   *"<<endl;
-	cout << "*          2.Phone                  *"<<endl;
-	cout << "*          3.Email                  *"<<endl;
-	cout << "*          4.Change Password        *"<<endl;
-	cout << "*          5.Exit                   *"<<endl;
-	cout << "-------------------------------------"<<endl;
-	cout << "Select : ";
-	getline(cin,option);
-	int check = checkinput(option);
-	switch(check){
-		case 1:{
-			cout << "Enter new Name : ";
-			getline(cin,name);
+	const int boxWidth = 43;
+    const int boxHeight = 14;
+    const int boxX = 30;
+    const int boxY = 5;
+    int selectedOption = 1; // Track the selected option
+    bool isSelected[6] = { false,true, false, false,false,false }; // Track which button is selected
+    while (true) {
+        drawBox(boxX, boxY, boxWidth, boxHeight);
+    	gotoxy(boxX + 3, boxY + 1);
+        cout << "---- SELECT INFORMATION TO UPDATE ----";
+        drawButton(boxX + 15, boxY + 3, "1. NAME", isSelected[1]);
+        drawButton(boxX + 15, boxY + 5, "2. PHONE", isSelected[2]);
+        drawButton(boxX + 15, boxY + 7, "3. EMAIL", isSelected[3]);
+        drawButton(boxX + 15, boxY + 9, "4. CHANGE PASSWORD",isSelected[4]);
+        drawButton(boxX + 15, boxY + 11,"5. BACK",isSelected[5]);
+        // Capture key press
+        char key = _getch();
+        if (key == 72) { // Up arrow key
+            isSelected[selectedOption] = false; // Deselect current option
+            selectedOption = (selectedOption == 1) ? 5 : selectedOption - 1; // Move up
+            isSelected[selectedOption] = true; // Select the new option
+       }else if (key == 80) { // Down arrow key
+            isSelected[selectedOption] = false; // Deselect current option
+            selectedOption = (selectedOption == 5) ? 1 : selectedOption + 1; // Move down
+            isSelected[selectedOption] = true; // Select the new option
+        }else if (key == 13) { // Enter key
+        	system("cls");
+        	if(selectedOption == 5) UserInterface(user,pass);
+        	else{
+        		string name,phone,email,oldpass,newpass;
+        		switch(selectedOption){
+        case 1:{
+			cout << "Enter new Name : "; getline(cin,name);
 			for(auto &own : listown){
-				if(own.GetOwnerID() == user){
-					own.SetName(name);
-				}
+				if(own.GetOwnerID() == user) own.SetName(name);
 			}
-			cout << "Update Name Success!!"<<endl;
+			cout << "Update Name Success!!"<<endl;_getch();system("cls");
 			break;
 		}
 		case 2:{
-			cout << "Enter new Phone : ";
-			getline(cin,phone);
+			cout << "Enter new Phone : "; getline(cin,phone);
 			for(auto &own : listown){
-				if(own.GetOwnerID() == user){
-					own.SetPhone(phone);
-				}
+				if(own.GetOwnerID() == user) own.SetPhone(phone);	
 			}
-			cout << "Update Phone Success!!"<<endl;
+			cout << "Update Phone Success!!"<<endl;_getch();system("cls");
 			break;
 		}
 		case 3:{
-			cout << "Enter new email : ";
-			getline(cin,email);
+			cout << "Enter new email : "; getline(cin,email);
 			for(auto &own : listown){
-				if(own.GetOwnerID() == user){
-					own.SetEmail(email);
-				}
+				if(own.GetOwnerID() == user) own.SetEmail(email);
 			}
-			cout << "Update Email Success!!"<<endl;
+			cout << "Update Email Success!!"<<endl;_getch();system("cls");
 			break;
 		}
 		case 4:{
@@ -545,15 +652,13 @@ void Accounts::Edit(Owners owner,string user,string pass)
 			}
 			break;
 		}
-		default:{
-			cout << "Invalid Option!!!"<<endl;
-			cout << "Press any key to continue"<<endl;_getch();system("cls");
-			break;
+	}
+			ofstream file("Owners.txt",ios::out);
+			for(auto own:listown){
+				file << own.GetOwnerID() <<";"<<own.GetName() << ";" << own.GetPhone() << ";" << own.GetEmail() << endl;
+			}
+			file.close();
 		}
-	}
-	ofstream file("Owners.txt",ios::out);
-	for(auto own:listown){
-		file << own.GetOwnerID() <<";"<<own.GetName() << ";" << own.GetPhone() << ";" << own.GetEmail() << endl;
-	}
-	file.close();
+   	}
+  }
 }
