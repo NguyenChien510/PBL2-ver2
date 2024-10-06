@@ -481,16 +481,18 @@ void Accounts::Register(ParkingLots pl,Vehicles veh,Registrations rg,string user
 }
 
 
+
 void Accounts::Edit(Owners owner,string user,string pass)
-{
-	here:
+{   
 	const int boxWidth = 43;
     const int boxHeight = 14;
     const int boxX = 30;
     const int boxY = 5;
     int selectedOption = 1; // Track the selected option
     bool isSelected[6] = { false,true, false, false,false,false }; // Track which button is selected
+    owner.Show(user);
     while (true) {
+    	ofstream file("Owners.txt",ios::out);
         drawBox(boxX, boxY, boxWidth, boxHeight);
     	gotoxy(boxX + 3, boxY + 1);
         cout << "---- SELECT INFORMATION TO UPDATE ----";
@@ -515,7 +517,7 @@ void Accounts::Edit(Owners owner,string user,string pass)
         	else{
         		string name,phone,email,oldpass,newpass;
         		switch(selectedOption){
-        					case 1:{
+        	case 1:{
 			cout << "Enter new Name : ";
 			getline(cin,name);
 			for(auto &own : listown){
@@ -523,8 +525,15 @@ void Accounts::Edit(Owners owner,string user,string pass)
 					own.SetName(name);
 				}
 			}
-			cout << "Update Name Success!!"<<endl;
-			break;
+			cout << "Update Name Success!!"<<endl;_getch();system("cls");
+//			for(auto own:listown){
+//			file << own.GetOwnerID() <<";"<<own.GetName() << ";" << own.GetPhone() << ";" << own.GetEmail() << endl;
+//			}
+//	       	file.close();
+			owner.SaveToFile();
+	       	owner.ReadFromFile();system("cls");
+			owner.Show(user);	
+			   break;
 		}
 		case 2:{
 			cout << "Enter new Phone : ";
@@ -551,7 +560,7 @@ void Accounts::Edit(Owners owner,string user,string pass)
 		case 4:{
 			cout << "Enter old password : ";getline(cin,oldpass);
 			if(oldpass != pass){
-				cout << "Wrong Password!!!"<<endl;cout << "Press any key to continue";_getch();system("cls");goto here;
+				cout << "Wrong Password!!!"<<endl;cout << "Press any key to continue";_getch();system("cls");Edit(owner,user,pass);
 			}
 			else{
 				cout << "Enter new password : ";getline(cin,newpass);
@@ -569,12 +578,8 @@ void Accounts::Edit(Owners owner,string user,string pass)
 			}
 			break;
 		}
+		owner.SaveToFile();
 				}
-	ofstream file("Owners.txt",ios::out);
-	for(auto own:listown){
-		file << own.GetOwnerID() <<";"<<own.GetName() << ";" << own.GetPhone() << ";" << own.GetEmail() << endl;
-	}
-	file.close();
 		}
    			}
   }

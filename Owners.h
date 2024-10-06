@@ -23,4 +23,5 @@ class Owners
 		void SetEmail(string);
 		void ReadFromFile();
 		void Show(string);
+		void SaveToFile();
 };
