@@ -30,7 +30,9 @@ void Owners::SetEmail(string mail){
 }
 void Owners::ReadFromFile()
 {
+	listown.clear();
 	ifstream filein("Owners.txt");
+	
 	if(!filein.is_open())
 	{
 		cout << "Cannot open Owenrs.txt"<<endl;
@@ -58,13 +60,28 @@ void Owners::Show(string user)
 {
 	cout << "-----------Infomation-----------"<<endl;
 	for(auto own : listown){
-		if(own.OwnerID == user)
+		if(own.GetOwnerID() == user)
 		{
-			cout << "Owner ID : " << own.OwnerID << endl;
-			cout << "Name     : " << own.Name << endl;
-			cout << "Phone    : " << own.Phone << endl;
-			cout << "Email    : " << own.Email << endl;
+			cout << "Owner ID : " << own.GetOwnerID() << endl;
+			cout << "Name     : " << own.GetName() << endl;
+			cout << "Phone    : " << own.GetPhone() << endl;
+			cout << "Email    : " << own.GetEmail() << endl;
 	cout << "---------------------------------"<<endl;
 		}
 	}
 }
+
+void Owners::SaveToFile() {
+        ofstream file("Owners.txt", ios::out);
+        if (!file) {
+            cerr << "Error: Could not open file for writing!" << endl;
+            return;
+        }
+
+        for (const auto& own : listown) {
+            file << own.OwnerID << ";" << own.Name << ";" << own.Phone << ";" << own.Email << endl;
+        }
+
+        file.close(); // Close the file after writing
+    }
+
