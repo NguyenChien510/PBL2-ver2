@@ -25,4 +25,5 @@ class Accounts : public ParkingLots , public Owners
 		void SetPassword(string);
 		void loginForm();
 		void Welcome();
+		void UserInterface(string,string);
 };

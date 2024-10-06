@@ -1,5 +1,47 @@
 #include "Accounts.h"
 #include <fstream>
+void UserInterface();
+void gotoxy(int x, int y) {
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+void setColor(int color) {
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}
+void drawButton(int x, int y, string label, bool isSelected) {
+    gotoxy(x, y);
+    if (isSelected) {
+        setColor(10); // Green color
+        cout << "[ " << label << " ]"; // Button is selected
+        setColor(7); // Return to default color
+    } else {
+        cout << "[ " << label << " ]"; // Button is not selected
+    }
+}
+void drawBox(int x, int y, int width, int height) {
+    // Ve khung dang nhap
+    gotoxy(x, y);
+    cout << char(218); // Goc tren trai
+    for (int i = 0; i < width - 2; i++) cout << char(196); // Duong ngang
+    cout << char(191); // Goc tren phai
+
+    for (int i = 0; i < height - 2; i++) {
+        gotoxy(x, y + i + 1);
+        cout << char(179); // Duong doc ben trai
+        gotoxy(x + width - 1, y + i + 1);
+        cout << char(179); // Duong doc ben phai
+    }
+
+    gotoxy(x, y + height - 1);
+    cout << char(192); // Goc duoi trai
+    for (int i = 0; i < width - 2; i++) cout << char(196); // Duong ngang duoi
+    cout << char(217); // Goc duoi phai
+}
+
+
+
 
 Accounts::Accounts(string username,string password,bool role)
 {
@@ -45,18 +87,6 @@ void AdminInterface()
 	cout << "Nhap lua chon : ";
 }
 
-void UserInterface()
-{
-	cout << "-------------- CHUC NANG -----------------"<<endl;
-	cout << "*               1.Dat ve                 *"<<endl;
-	cout << "*               2.Xem ve                 *"<<endl;
-	cout << "*               3.Chinh sua              *"<<endl;
-	cout << "*               4.Dang xuat              *"<<endl;
-	cout << "*               5.Thoat                  *"<<endl;
-	cout << "LUU Y : Moi user chi dang ki toi da 3 ve!!"<<endl;
-	cout << "-----------------------------------------------"<<endl;
-	cout <<"Nhap lua chon : ";
-}
 
 int	Accounts::checkinput(string s){
 	for(char c:s){
@@ -81,86 +111,15 @@ bool Accounts::Login(string user,string pass)
 	{
 		if(acc.username == user && acc.password == pass && acc.role == 1)	//ADMIN
 		{
-				string option;
-				while(1)
-				{
-					AdminInterface();
-					getline(cin,option);
-					int check = checkinput(option);
-					system("cls");
-					switch(check)
-					{
-						case 1:
-							cout << "------ TAO VE MOI ------"<<endl;
-							
-							break;
-						case 2:
-							cout << "------ DANH SANH ------"<<endl;
-							ParkingLots pl;
-							pl.Show(4);
-							cout <<endl<<endl<<"BAM PHIM BAT KI DE QUAY TRO LAI....."<<endl;
-                    		_getch();
-                    		system("cls");
-							break;
-						
-					}
-				}
-			}
-			else if(acc.username == user && acc.password == pass && acc.role == 0)   //USER
-			{
-				system("cls");
-				string option;
-				while(1)
-				{
-					UserInterface();
-					getline(cin,option);
-					int check = checkinput(option);
-					if(check >=1 && check <= 5) system("cls");
-					ParkingLots pl;Vehicles veh;Registrations rg;Owners owner;
-					switch(check)
-					{
-						case 1:{
-							here:
-							cout << "-------- ORDER TICKET -------"<<endl;
-							cout << "*         1.DAILY           *"<<endl;
-							cout << "*         2.WEEKLY          *"<<endl;
-							cout << "*         3.MONTHLY         *"<<endl;
-							cout << "-----------------------------"<<endl;
-							cout << "SELECT : ";
-							getline(cin,option);
-							int check = checkinput(option);
-							if(check == -1){
-								cout << "\nInvalid option!! Select again please"<<endl;
-								cout << "Press any key to continue"<<endl;_getch();system("cls");goto here;
-							}
-							Register(pl,veh,rg,user,check);
-							break;
-						}
-						case 2:{
-							rg.Show(user);
-							_getch();
-							system("cls");
-							break;
-						}
-						case 3:{
-							Edit(owner,user,pass);
-							break;
-						}
-						default:
-							cout << "\nVui long nhap dung so lua chon!!"<<endl;
-							cout << "Press any key to coninue..."<<endl;
-							_getch();
-							system("cls");
-							break;	
-					}
-				}
-				
-			}
+			while(1) AdminInterface();
 		}
-		cout << "Invalid username or password!!!"<<endl;
+		else if(acc.username == user && acc.password == pass && acc.role == 0)   //USER
+		{
+			while(1) UserInterface(user,pass);
+		}
 	}
 }
-
+}
 string GetPassword() {
     string pass = "";
     char ch;
@@ -175,45 +134,6 @@ string GetPassword() {
     }
     cout << endl;
     return pass;
-}
-
-void gotoxy(int x, int y) {
-    COORD coord;
-    coord.X = x;
-    coord.Y = y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-}
-void setColor(int color) {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
-}
-void drawButton(int x, int y, string label, bool isSelected) {
-    gotoxy(x, y);
-    if (isSelected) {
-        setColor(10); // Green color
-        cout << "[ " << label << " ]"; // Button is selected
-        setColor(7); // Return to default color
-    } else {
-        cout << "[ " << label << " ]"; // Button is not selected
-    }
-}
-void drawBox(int x, int y, int width, int height) {
-    // Ve khung dang nhap
-    gotoxy(x, y);
-    cout << char(218); // Goc tren trai
-    for (int i = 0; i < width - 2; i++) cout << char(196); // Duong ngang
-    cout << char(191); // Goc tren phai
-
-    for (int i = 0; i < height - 2; i++) {
-        gotoxy(x, y + i + 1);
-        cout << char(179); // Duong doc ben trai
-        gotoxy(x + width - 1, y + i + 1);
-        cout << char(179); // Duong doc ben phai
-    }
-
-    gotoxy(x, y + height - 1);
-    cout << char(192); // Goc duoi trai
-    for (int i = 0; i < width - 2; i++) cout << char(196); // Duong ngang duoi
-    cout << char(217); // Goc duoi phai
 }
 
 void Accounts::loginForm() {
@@ -385,7 +305,89 @@ void Accounts::Welcome() {
 }
 
 
-
+void Accounts::UserInterface(string user,string pass) {
+	ParkingLots pl;Vehicles veh;Registrations rg;Owners owner;
+    // Define the dimensions and position of the user interface
+    const int boxWidth = 43;
+    const int boxHeight = 12;
+    const int boxX = 30;
+    const int boxY = 5;
+    int selectedOption = 1; // Track the selected option
+    bool isSelected[5] = { true, false, false, false, false }; // Track which button is selected
+    while (true) {
+        drawBox(boxX, boxY, boxWidth, boxHeight);
+        gotoxy(boxX + 3, boxY + 1);
+        cout << "-------------- MENU --------------";
+        drawButton(boxX + 13, boxY + 3, "1. Dat ve", isSelected[0]);
+        drawButton(boxX + 13, boxY + 4, "2. Xem ve", isSelected[1]);
+        drawButton(boxX + 13, boxY + 5, "3. Chinh sua", isSelected[2]);
+        drawButton(boxX + 13, boxY + 6, "4. Dang xuat", isSelected[3]);
+        drawButton(boxX + 13, boxY + 7, "5. Thoat", isSelected[4]);
+        gotoxy(boxX + 1, boxY + 9);
+        cout << "LUU Y: Moi user chi dang ky toi da 3 ve!!";
+        // Capture key press
+        char key = _getch();
+        if (key == 72) { // Up arrow key
+            isSelected[selectedOption] = false; // Deselect current option
+            selectedOption = (selectedOption == 1) ? 5 : selectedOption - 1; // Move up
+            isSelected[selectedOption] = true; // Select the new option
+        } else if (key == 80) { // Down arrow key
+            isSelected[selectedOption] = false; // Deselect current option
+            selectedOption = (selectedOption == 5) ? 0 : selectedOption + 1; // Move down
+            isSelected[selectedOption] = true; // Select the new option
+        } else if (key == 13) { // Enter key
+            // Handle the selected option
+            switch (selectedOption) {
+                case 1:{
+                	system("cls");
+                    const int boxWidth = 43;
+    				const int boxHeight = 10;
+    				const int boxX = 30;
+    				const int boxY = 5;
+    				int selectedOption = 0; // Track the selected option
+    				bool isSelected[3] = { true, false, false }; // Track which button is selected
+    				while (true) {
+        			drawBox(boxX, boxY, boxWidth, boxHeight);
+        			gotoxy(boxX + 3, boxY + 1);
+        			cout << "-------------- ORDER --------------";
+        			drawButton(boxX + 13, boxY + 3, "1. DAILY", isSelected[0]);
+        			drawButton(boxX + 13, boxY + 5, "2. WEEKLY", isSelected[1]);
+        			drawButton(boxX + 13, boxY + 7, "3. MONTHLY", isSelected[2]);
+        			// Capture key press
+        			char key = _getch();
+        			if (key == 72) { // Up arrow key
+            			isSelected[selectedOption] = false; // Deselect current option
+            			selectedOption = (selectedOption == 0) ? 2 : selectedOption - 1; // Move up
+            			isSelected[selectedOption] = true; // Select the new option
+        			} else if (key == 80) { // Down arrow key
+            			isSelected[selectedOption] = false; // Deselect current option
+            			selectedOption = (selectedOption == 2) ? 0 : selectedOption + 1; // Move down
+            			isSelected[selectedOption] = true; // Select the new option
+        			} else if (key == 13) { // Enter key
+        				system("cls");
+ 						Register(pl,veh,rg,user,selectedOption);
+        				}
+   					}
+   				}
+                    break;
+                case 2:
+                    cout << "\nYou chose: Xem ve (2)\n";
+                    break;
+                case 3:
+                    cout << "\nYou chose: Chinh sua (3)\n";
+                    break;
+                case 4:
+                    cout << "\nYou chose: Dang xuat (4)\n";
+                    break;
+                case 5:
+                    cout << "\nYou chose: Thoat (5)\n";
+                    exit(0); // Exit the program
+            }
+            _getch(); // Wait for a key press before continuing
+            system("cls"); // Clear the screen
+        }
+    }
+}
 
 
 
