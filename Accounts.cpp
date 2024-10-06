@@ -121,7 +121,7 @@ bool Accounts::Login(string user,string pass)
 string GetPassword() {
     string pass = "";
     char ch;
-    while ((ch = _getch()) != '\r') { // '\r' là ki tu Enter
+    while ((ch = _getch()) != '\r') { // '\r' lï¿½ ki tu Enter
         if (ch == '\b' && !pass.empty()) { // Xoa ki tu neu nhin Backspace
             pass.pop_back();
             cout << "\b \b"; // Xoa ki tu hien thi tren man hinh
@@ -389,8 +389,8 @@ void Accounts::AdminInterface(string user,string pass)
 									break;
 								}
 								case 5:{
-									system("cls");veh.ReadFromFile();
-									veh.Show();_getch();system("cls");
+									system("cls");rg.ReadFromFile();
+									rg.Show(user);_getch();system("cls");
 									break;
 								}
 								case 6:{
