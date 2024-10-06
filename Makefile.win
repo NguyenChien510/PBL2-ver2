@@ -4,11 +4,11 @@
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = Accounts.o main.o ParkingLots.o Vehicles.o Owners.o Registrations.o
-LINKOBJ  = Accounts.o main.o ParkingLots.o Vehicles.o Owners.o Registrations.o
-LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc
-INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
-CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+OBJ      = Vehicles.o Owners.o Registrations.o ParkingLots.o Accounts.o main.o
+LINKOBJ  = Vehicles.o Owners.o Registrations.o ParkingLots.o Accounts.o main.o
+LIBS     = -L"C:/Dev-Cpp/MinGW64/lib" -L"C:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc
+INCS     = -I"C:/Dev-Cpp/MinGW64/include" -I"C:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
+CXXINCS  = -I"C:/Dev-Cpp/MinGW64/include" -I"C:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
 BIN      = PBL2.exe
 CXXFLAGS = $(CXXINCS) -std=c++11
 CFLAGS   = $(INCS) -std=c++11
@@ -24,15 +24,6 @@ clean: clean-custom
 $(BIN): $(OBJ)
 	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
 
-Accounts.o: Accounts.cpp
-	$(CPP) -c Accounts.cpp -o Accounts.o $(CXXFLAGS)
-
-main.o: main.cpp
-	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)
-
-ParkingLots.o: ParkingLots.cpp
-	$(CPP) -c ParkingLots.cpp -o ParkingLots.o $(CXXFLAGS)
-
 Vehicles.o: Vehicles.cpp
 	$(CPP) -c Vehicles.cpp -o Vehicles.o $(CXXFLAGS)
 
@@ -41,3 +32,12 @@ Owners.o: Owners.cpp
 
 Registrations.o: Registrations.cpp
 	$(CPP) -c Registrations.cpp -o Registrations.o $(CXXFLAGS)
+
+ParkingLots.o: ParkingLots.cpp
+	$(CPP) -c ParkingLots.cpp -o ParkingLots.o $(CXXFLAGS)
+
+Accounts.o: Accounts.cpp
+	$(CPP) -c Accounts.cpp -o Accounts.o $(CXXFLAGS)
+
+main.o: main.cpp
+	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)

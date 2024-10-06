@@ -13,6 +13,14 @@ class Owners
 		vector<Owners>listown;
 	public:
 		Owners(string,string,string,string);
+		Owners();
 		string GetOwnerID();
+		string GetName();
+		string GetPhone();
+		string GetEmail();
+		void SetName(string);
+		void SetPhone(string);
+		void SetEmail(string);
 		void ReadFromFile();
+		void Show(string);
 };
