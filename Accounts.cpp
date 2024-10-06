@@ -389,7 +389,7 @@ void Accounts::AdminInterface(string user,string pass)
 									break;
 								}
 								case 5:{
-									system("cls");rg.ReadFromFile();
+									system("cls");
 									rg.Show(user);_getch();system("cls");
 									break;
 								}

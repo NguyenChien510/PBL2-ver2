@@ -48,14 +48,10 @@ Registrations::Registrations()
 	ReadFromFile();
 }
 
-
 void Registrations::Show(string user)
 {
-    // Load vehicles
     Vehicles::ReadFromFile();
-
     if (user == "admin") {
-        // Header for admin view
         cout << setw(15) << "Registration ID" << " | "
              << setw(10) << "Owner ID" << " | "
              << setw(5) << "Lot ID" << " | "
@@ -66,33 +62,28 @@ void Registrations::Show(string user)
              << setw(10) << "Ticket Type" << " | "
              << setw(7) << "Price" << " | "
              << setw(15) << "Start Time" << endl;
-        cout << setfill('-') << setw(110) << "-" << setfill(' ') << endl;
-
-        // Display all registrations for admin
+        cout << setfill('-') << setw(134) << "-" << setfill(' ') << endl;
         for (auto& rg : listregis) {
             for (auto& veh : listveh) {
-                // Match vehicle license plate with registration license plate
                 if (rg.LicensePlate == veh.GetLicensePlate()) {
                     cout << setw(15) << rg.RegistrationID << " | "
                          << setw(10) << rg.OwnerID << " | "
-                         << setw(5) << rg.LotID << " | "
+                         << setw(6) << rg.LotID << " | "
                          << setw(15) << rg.LicensePlate << " | "
                          << setw(10) << veh.GetBrand() << " | "
                          << setw(10) << veh.GetModel() << " | "
                          << setw(7) << veh.GetColor() << " | "
-                         << setw(10) << ((rg.TicketType == 1) ? "DAILY" : (rg.TicketType == 2 ? "WEEKLY" : "MONTHLY")) << " | "
+                         << setw(11) << ((rg.TicketType == 1) ? "DAILY" : (rg.TicketType == 2 ? "WEEKLY" : "MONTHLY")) << " | "
                          << setw(7) << rg.TicketPrice << " | "
                          << setw(15) << rg.StartTime << endl;
                 }
             }
         }
     } else {
-        // Display only the registrations that match the user's Owner ID
         for (auto& rg : listregis) {
             if (rg.OwnerID == user) {
                 for (auto& veh : listveh) {
                     if (rg.LicensePlate == veh.GetLicensePlate()) {
-                        // Formatting for user view
                         cout << "--------------------------------------" << endl;
                         cout << "Registration ID : " << rg.RegistrationID << endl;
                         cout << "Owner ID        : " << rg.OwnerID << endl;
