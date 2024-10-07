@@ -16,4 +16,5 @@ class Registrations : public ParkingLots, public Vehicles
 		Registrations(string,string,string,string,int,int,string);
 		void ReadFromFile();
 		void Show(string);
+		friend void PrintRegistrationDetails(const Registrations&,Vehicles, bool);
 };

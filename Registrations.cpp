@@ -1,5 +1,6 @@
 #include "Registrations.h"
 #include <iomanip>
+#include <map>
 const int DAILY = 50000;
 const int WEEKLY = 100000;
 const int MONTHLY = 200000;
@@ -48,9 +49,42 @@ Registrations::Registrations()
 	ReadFromFile();
 }
 
-void Registrations::Show(string user)
-{
+
+void PrintRegistrationDetails(const Registrations& rg,Vehicles veh, bool isAdmin) {
+    if (isAdmin) {
+        cout << setw(15) << rg.RegistrationID << " | "
+             << setw(10) << rg.OwnerID << " | "
+             << setw(6) << rg.LotID << " | "
+             << setw(15) << rg.LicensePlate << " | "
+             << setw(10) << veh.GetBrand() << " | "
+             << setw(10) << veh.GetModel() << " | "
+             << setw(7) << veh.GetColor() << " | "
+             << setw(11) << ((rg.TicketType == 1) ? "DAILY" : (rg.TicketType == 2 ? "WEEKLY" : "MONTHLY")) << " | "
+             << setw(7) << rg.TicketPrice << " | "
+             << setw(15) << rg.StartTime << endl;
+    } else {
+        cout << "--------------------------------------" << endl;
+        cout << "Registration ID : " << rg.RegistrationID << endl;
+        cout << "Owner ID        : " << rg.OwnerID << endl;
+        cout << "Lot ID          : " << rg.LotID << endl;
+        cout << "License Plate   : " << rg.LicensePlate << endl;
+        cout << "Brand           : " << veh.GetBrand() << endl;
+        cout << "Model           : " << veh.GetModel() << endl;
+        cout << "Color           : " << veh.GetColor() << endl;
+        cout << "Ticket Type     : " << ((rg.TicketType == 1) ? "DAILY" : (rg.TicketType == 2 ? "WEEKLY" : "MONTHLY")) << endl;
+        cout << "Price           : " << rg.TicketPrice << endl;
+        cout << "Start Time      : " << rg.StartTime << endl;
+        cout << "--------------------------------------" << endl;
+    }
+}
+
+void Registrations::Show(string user) {
+    // Map for quick vehicle lookup by license plate
     Vehicles::ReadFromFile();
+    map<string, Vehicles> vehicleMap;
+    for (auto& veh : listveh) {
+        vehicleMap[veh.GetLicensePlate()] = veh;
+    }
     if (user == "admin") {
         cout << setw(15) << "Registration ID" << " | "
              << setw(10) << "Owner ID" << " | "
@@ -64,40 +98,15 @@ void Registrations::Show(string user)
              << setw(15) << "Start Time" << endl;
         cout << setfill('-') << setw(134) << "-" << setfill(' ') << endl;
         for (auto& rg : listregis) {
-            for (auto& veh : listveh) {
-                if (rg.LicensePlate == veh.GetLicensePlate()) {
-                    cout << setw(15) << rg.RegistrationID << " | "
-                         << setw(10) << rg.OwnerID << " | "
-                         << setw(6) << rg.LotID << " | "
-                         << setw(15) << rg.LicensePlate << " | "
-                         << setw(10) << veh.GetBrand() << " | "
-                         << setw(10) << veh.GetModel() << " | "
-                         << setw(7) << veh.GetColor() << " | "
-                         << setw(11) << ((rg.TicketType == 1) ? "DAILY" : (rg.TicketType == 2 ? "WEEKLY" : "MONTHLY")) << " | "
-                         << setw(7) << rg.TicketPrice << " | "
-                         << setw(15) << rg.StartTime << endl;
-                }
+            if (vehicleMap.find(rg.LicensePlate) != vehicleMap.end()) {
+                PrintRegistrationDetails(rg, vehicleMap[rg.LicensePlate], true);
             }
         }
-    } else {
+    }
+    else {
         for (auto& rg : listregis) {
-            if (rg.OwnerID == user) {
-                for (auto& veh : listveh) {
-                    if (rg.LicensePlate == veh.GetLicensePlate()) {
-                        cout << "--------------------------------------" << endl;
-                        cout << "Registration ID : " << rg.RegistrationID << endl;
-                        cout << "Owner ID        : " << rg.OwnerID << endl;
-                        cout << "Lot ID          : " << rg.LotID << endl;
-                        cout << "License Plate   : " << rg.LicensePlate << endl;
-                        cout << "Brand           : " << veh.GetBrand() << endl;
-                        cout << "Model           : " << veh.GetModel() << endl;
-                        cout << "Color           : " << veh.GetColor() << endl;
-                        cout << "Ticket Type     : " << ((rg.TicketType == 1) ? "DAILY" : (rg.TicketType == 2 ? "WEEKLY" : "MONTHLY")) << endl;
-                        cout << "Price           : " << rg.TicketPrice << endl;
-                        cout << "Start Time      : " << rg.StartTime << endl;
-                        cout << "--------------------------------------" << endl;
-                    }
-                }
+            if (rg.OwnerID == user && vehicleMap.find(rg.LicensePlate) != vehicleMap.end()) {
+                PrintRegistrationDetails(rg, vehicleMap[rg.LicensePlate], false);
             }
         }
     }
